@@ -1,0 +1,26 @@
+#spring.application.name=PNCControllers
+#spring.mustache.suffix=.html
+
+spring:
+  sql:
+    init:
+      mode: always
+  application:
+    name: PNCControllers
+  mustache:
+    suffix: .html
+  datasource:
+    url: jdbc:postgresql://localhost:5500/library
+    username: postgres
+    password: 12345678Aa! # Cambia esto por tu contraseña
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+    show-sql: true
+    defer-datasource-initialization: true # Permite ejecutar la creación de tablas antes de ejecutar el script de inicialización
+jwt:
+  secret: UltraSecretKey
+  exptime: 1296000000 # Tiempo de expiración en milisegundos (15 días)
