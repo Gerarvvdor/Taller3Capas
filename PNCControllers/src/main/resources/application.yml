@@ -22,5 +22,5 @@ spring:
     show-sql: true
     defer-datasource-initialization: true # Permite ejecutar la creación de tablas antes de ejecutar el script de inicialización
 jwt:
-  secret: UltraSecretKey
+  secret: eyJzdWIiOiAiMTIzNDU2Nzg5MCIsICJuYW1lIjogIkpvaG4gRG9lIiwgImlhdCI6IDE1MTYyMzkwMjJ9 # Clave secreta para JWT
   exptime: 1296000000 # Tiempo de expiración en milisegundos (15 días)
