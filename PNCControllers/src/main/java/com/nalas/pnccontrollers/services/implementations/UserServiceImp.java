@@ -1,18 +1,32 @@
 package com.nalas.pnccontrollers.services.implementations;
 
 import com.nalas.pnccontrollers.domain.dtos.UserRegiserDTO;
+import com.nalas.pnccontrollers.domain.entities.Token;
 import com.nalas.pnccontrollers.domain.entities.User;
+import com.nalas.pnccontrollers.repositories.TokenRepository;
 import com.nalas.pnccontrollers.repositories.UserRepository;
 import com.nalas.pnccontrollers.services.UserService;
+import com.nalas.pnccontrollers.utils.JWTTools;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImp implements UserService {
+
+    private final JWTTools jwtTools;
+
+    private final TokenRepository tokenRepository;
+
     private final UserRepository userRepository;
 
-    public UserServiceImp(UserRepository userRepository) {
+    public UserServiceImp(UserRepository userRepository, JWTTools jwtTools, TokenRepository tokenRepository) {
         this.userRepository = userRepository;
+        this.jwtTools = jwtTools;
+        this.tokenRepository = tokenRepository;
     }
 
     @Override
@@ -40,5 +54,70 @@ public class UserServiceImp implements UserService {
     @Override
     public boolean checkPassword(User user, String password) {
         return user.getPassword().equals(password);
+    }
+
+    @Override
+    public User findOneByIdentifier(String username) {
+        try {
+            Optional<User> userOptional = userRepository.findByUsername(username);
+            return userOptional.orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public Token registerToken(User user) throws Exception {
+        cleanTokens(user);
+
+        String tokenString = jwtTools.generateToken(user);
+        Token token = new Token(tokenString, user);
+
+        tokenRepository.save(token);
+
+        return token;
+    }
+
+    @Override
+    public Boolean isTokenValid(User user, String token) {
+        try {
+            cleanTokens(user);
+            List<Token> tokens = tokenRepository.findByUserAndActive(user, true);
+
+            tokens.stream()
+                    .filter(tk -> tk.getContent().equals(token))
+                    .findAny()
+                    .orElseThrow(() -> new Exception());
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public void cleanTokens(User user) throws Exception {
+        List<Token> tokens = tokenRepository.findByUserAndActive(user, true);
+
+        tokens.forEach(token -> {
+            if(!jwtTools.verifyToken(token.getContent())) {
+                token.setActive(false);
+                tokenRepository.save(token);
+            }
+        });
+
+    }
+
+    @Override
+    public Optional<User> findUserAuthenticated() {
+        String username = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        return userRepository.findByUsernameOrEmail(username, username);
     }
 }

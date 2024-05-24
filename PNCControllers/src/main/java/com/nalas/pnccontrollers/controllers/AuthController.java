@@ -2,7 +2,9 @@ package com.nalas.pnccontrollers.controllers;
 
 import com.nalas.pnccontrollers.domain.dtos.GeneralResponse;
 import com.nalas.pnccontrollers.domain.dtos.LoginDTO;
+import com.nalas.pnccontrollers.domain.dtos.TokenDTO;
 import com.nalas.pnccontrollers.domain.dtos.UserRegiserDTO;
+import com.nalas.pnccontrollers.domain.entities.Token;
 import com.nalas.pnccontrollers.domain.entities.User;
 import com.nalas.pnccontrollers.services.UserService;
 import jakarta.validation.Valid;
@@ -23,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<GeneralResponse> login(@RequestBody @Valid LoginDTO info) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginDTO info) {
         User user = userService.findByIdentifier(info.getIdentifier());
 
         if (user == null) {
@@ -40,10 +42,15 @@ public class AuthController {
                     .build();
         }
 
-        return GeneralResponse.builder()
-                .status(HttpStatus.OK)
-                .message("User logged in")
-                .build();
+        try {
+            Token token = userService.registerToken(user);
+            return new ResponseEntity<>(new TokenDTO(token), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        // TODO: return status
     }
 
     @PostMapping("/register")
