@@ -23,11 +23,9 @@ public class JWTTools {
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
 
-        claims.put("username", user.getUsername());
-
         return Jwts.builder()
                 .claims(claims)
-                // .subject(user.getUsername())
+                .subject(user.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + exp))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
@@ -53,7 +51,6 @@ public class JWTTools {
             JwtParser parser = Jwts.parser()
                     .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
                     .build();
-
             return parser.parseSignedClaims(token)
                     .getPayload()
                     .getSubject();

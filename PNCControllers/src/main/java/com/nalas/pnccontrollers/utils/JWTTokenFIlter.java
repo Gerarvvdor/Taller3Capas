@@ -33,6 +33,12 @@ public class JWTTokenFIlter extends OncePerRequestFilter{
                 String username = null;
                 String token = null;
 
+                // Evitar aplicar el filtro JWT a las rutas de autenticación
+                if (request.getRequestURI().startsWith("/api/auth")) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
                 if(tokenHeader != null && tokenHeader.startsWith("Bearer ") && tokenHeader.length() > 7) {
                     token = tokenHeader.substring(7);
 
@@ -48,21 +54,21 @@ public class JWTTokenFIlter extends OncePerRequestFilter{
                 } else {
                     System.out.println("Bearer string not found");
                 }
+
+                //Validating the token
                 if(username != null && token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
                     User user = userService.findOneByIdentifier(username);
 
                     if(user != null) {
                         Boolean tokenValidity = userService.isTokenValid(user, token);
-
                         if(tokenValidity) {
                             //Preparing the authentication token.
                             UsernamePasswordAuthenticationToken authToken
                                     = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-
                             authToken.setDetails(
                                     new WebAuthenticationDetailsSource().buildDetails(request)
                             );
-
                             //This line, sets the user to security context to be handled by the filter chain
                             SecurityContextHolder
                                     .getContext()

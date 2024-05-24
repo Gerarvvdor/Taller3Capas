@@ -58,8 +58,8 @@ public class WebSecurityConfiguration {
         //Route filter
         http.authorizeHttpRequests(auth ->
                 auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("api/auth/**").permitAll()
+                        .anyRequest().authenticated() // All other routes require authentication
         );
 
         //Statelessness
