@@ -20,8 +20,7 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private String email;
-
-    @Column(name = "active", insertable = false) // TODO: Check if this is correct
+    @Column(name = "active", insertable = false)
     private Boolean active;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

@@ -8,7 +8,9 @@ import com.nalas.pnccontrollers.repositories.UserRepository;
 import com.nalas.pnccontrollers.services.UserService;
 import com.nalas.pnccontrollers.utils.JWTTools;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,9 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImp implements UserService {
+
+    @Autowired
+    public PasswordEncoder passwordEncoder;
 
     private final JWTTools jwtTools;
 
@@ -46,14 +51,15 @@ public class UserServiceImp implements UserService {
 
         user.setUsername(info.getUsername());
         user.setEmail(info.getEmail());
-        user.setPassword(info.getPassword());
+        user.setPassword(passwordEncoder.encode(info.getPassword()));
 
         userRepository.save(user);
     }
 
     @Override
     public boolean checkPassword(User user, String password) {
-        return user.getPassword().equals(password);
+
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
     @Override
