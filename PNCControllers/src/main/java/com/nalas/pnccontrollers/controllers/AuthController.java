@@ -33,24 +33,31 @@ public class AuthController {
                     .message("User not found")
                     .status(HttpStatus.NOT_FOUND)
                     .build();
+        } else if (!user.getActive()) { // Validate if user is active
+            return GeneralResponse.builder()
+                    .message("User is not active")
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
         }
 
         if (!userService.checkPassword(user, info.getPassword())) {
             return GeneralResponse.builder()
-                    .status(HttpStatus.NOT_FOUND) // Este status puede ser un 401 unauthorized
+                    .status(HttpStatus.NOT_FOUND)
                     .message("Incorrect password")
                     .build();
         }
 
         try {
+
             Token token = userService.registerToken(user);
+
+
             return new ResponseEntity<>(new TokenDTO(token), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        // TODO: return status
     }
 
     @PostMapping("/register")

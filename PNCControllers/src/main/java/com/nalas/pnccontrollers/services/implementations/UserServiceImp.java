@@ -74,22 +74,42 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    public boolean deleteFindOneByIdentifier(String identifier) {
+        try {
+            User user = userRepository.findByUsernameOrEmail(identifier, identifier).orElse(null);
+
+            if(user != null && user.getActive()) {
+                user.setActive(false);
+                userRepository.save(user);
+                return true; // User deleted
+            }else {
+                return false; // User not found
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // Error
+        }
+    }
+
+    @Override
     @Transactional(rollbackOn = Exception.class)
     public Token registerToken(User user) throws Exception {
         cleanTokens(user);
 
         String tokenString = jwtTools.generateToken(user);
         Token token = new Token(tokenString, user);
-
         tokenRepository.save(token);
 
         return token;
     }
 
+
     @Override
     public Boolean isTokenValid(User user, String token) {
         try {
             cleanTokens(user);
+
+            // Get all active tokens
             List<Token> tokens = tokenRepository.findByUserAndActive(user, true);
 
             tokens.stream()
@@ -106,14 +126,14 @@ public class UserServiceImp implements UserService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public void cleanTokens(User user) throws Exception {
+        // Get all active tokens
         List<Token> tokens = tokenRepository.findByUserAndActive(user, true);
 
-        tokens.forEach(token -> {
-            if(!jwtTools.verifyToken(token.getContent())) {
-                token.setActive(false);
-                tokenRepository.save(token);
-            }
-        });
+        // Verify if token is valid
+        for (Token token : tokens) {
+            token.setActive(false);
+            tokenRepository.save(token);
+        }
 
     }
 

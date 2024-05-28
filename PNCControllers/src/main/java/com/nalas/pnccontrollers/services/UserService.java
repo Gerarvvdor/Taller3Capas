@@ -17,6 +17,8 @@ public interface UserService {
 
     User findOneByIdentifier(String username);
 
+    boolean deleteFindOneByIdentifier(String identifier);
+
     Token registerToken(User user) throws Exception;
     Boolean isTokenValid(User user, String token);
     void cleanTokens(User user) throws Exception;
