@@ -77,9 +77,11 @@ public class UserServiceImp implements UserService {
     public boolean deleteFindOneByIdentifier(String identifier) {
         try {
             User user = userRepository.findByUsernameOrEmail(identifier, identifier).orElse(null);
+            cleanTokens(user);
 
             if(user != null && user.getActive()) {
                 user.setActive(false);
+
                 userRepository.save(user);
                 return true; // User deleted
             }else {
