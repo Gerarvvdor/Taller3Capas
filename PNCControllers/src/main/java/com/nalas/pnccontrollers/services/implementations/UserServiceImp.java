@@ -107,7 +107,6 @@ public class UserServiceImp implements UserService {
     @Override
     public Boolean isTokenValid(User user, String token) {
         try {
-            cleanTokens(user);
 
             // Get all active tokens
             List<Token> tokens = tokenRepository.findByUserAndActive(user, true);
