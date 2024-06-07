@@ -23,9 +23,6 @@ public class UserController {
     @PostMapping("/change:roles")
     public ResponseEntity<GeneralResponse> changeRoles(@RequestBody @Valid ChangeRolesDTO info){
 
-        System.out.println("User: " + info.getIdentifier());
-        System.out.println("Roles: " + info.getRoles());
-
         User user = userService.findByIdentifier(info.getIdentifier());
 
         if(user == null){
