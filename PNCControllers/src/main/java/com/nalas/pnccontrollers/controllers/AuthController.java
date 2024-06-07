@@ -4,6 +4,7 @@ import com.nalas.pnccontrollers.domain.dtos.GeneralResponse;
 import com.nalas.pnccontrollers.domain.dtos.LoginDTO;
 import com.nalas.pnccontrollers.domain.dtos.TokenDTO;
 import com.nalas.pnccontrollers.domain.dtos.UserRegiserDTO;
+import com.nalas.pnccontrollers.domain.entities.Role;
 import com.nalas.pnccontrollers.domain.entities.Token;
 import com.nalas.pnccontrollers.domain.entities.User;
 import com.nalas.pnccontrollers.services.UserService;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -56,7 +60,10 @@ public class AuthController {
             return GeneralResponse.builder()
                     .data(new TokenDTO(token))
                     .status(HttpStatus.OK)
-                    .message("User logged in successfully -- ROL:" + user.getRoles().toString())
+                    .message("User logged in successfully -- ROLES: " +
+                            user.getRoles().stream()
+                                    .map(Role::getName)
+                                    .collect(Collectors.joining(", ")))
                     .build();
 
         } catch (Exception e) {

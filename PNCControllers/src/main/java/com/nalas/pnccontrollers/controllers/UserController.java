@@ -20,20 +20,22 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/change")
+    @PostMapping("/change:roles")
     public ResponseEntity<GeneralResponse> changeRoles(@RequestBody @Valid ChangeRolesDTO info){
+
+        System.out.println("User: " + info.getIdentifier());
+        System.out.println("Roles: " + info.getRoles());
 
         User user = userService.findByIdentifier(info.getIdentifier());
 
-
-        if(user == null) {
+        if(user == null){
             return GeneralResponse.builder()
                     .message("User not found")
                     .status(HttpStatus.NOT_FOUND)
                     .build();
         }
 
-        //userService.changeRoles(user, info.getRoles());
+        userService.changeRoles(user, info.getRoles());
 
         return GeneralResponse.builder()
                 .message("Roles changed")
