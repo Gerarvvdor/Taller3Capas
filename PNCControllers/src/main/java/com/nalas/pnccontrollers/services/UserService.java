@@ -4,6 +4,7 @@ import com.nalas.pnccontrollers.domain.dtos.UserRegiserDTO;
 import com.nalas.pnccontrollers.domain.entities.Token;
 import com.nalas.pnccontrollers.domain.entities.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -23,4 +24,7 @@ public interface UserService {
     Boolean isTokenValid(User user, String token);
     void cleanTokens(User user) throws Exception;
     Optional<User> findUserAuthenticated();
+
+    void changeRoles(User user, List<String> roles);
+
 }

@@ -2,6 +2,7 @@ package com.nalas.pnccontrollers.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.Fetch;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,7 @@ public class User implements UserDetails {
     private String email;
     private Boolean active = true;
 
+<<<<<<< HEAD
     @ManyToMany(fetch = FetchType.EAGER)
 
     @JoinTable(
@@ -32,6 +34,15 @@ public class User implements UserDetails {
 
     List<Role> roles;
 
+=======
+
+    @ManyToMany(FetchType.EAGER)
+    @JoinTable{
+        name = "sec02_permissions",
+        joinColummns = @JoinColumns(name ="user_id"),
+        inverseJoinColunms = @JoinColumns(name = "role_id")
+    }
+>>>>>>> 61448c1daff805b300bbd73b9e411ef03d8fbe77
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Token> tokens;
@@ -61,3 +72,4 @@ public class User implements UserDetails {
         return this.active;
     }
 }
+

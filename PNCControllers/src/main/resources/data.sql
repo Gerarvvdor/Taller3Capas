@@ -9,3 +9,5 @@ INSERT INTO "sec01_categories" VALUES ('CT_DRM', 'Drama') ON CONFLICT (code) DO 
 INSERT INTO "sec01_categories" VALUES ('CT_DOC', 'Documentación') ON CONFLICT (code) DO UPDATE set "name" = excluded."name";
 INSERT INTO "sec01_categories" VALUES ('CT_SCS', 'Ciencia') ON CONFLICT (code) DO UPDATE set "name" = excluded."name";
 
+
+INSERT INTO public."sec02_roles" VALUES ()
