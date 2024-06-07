@@ -70,7 +70,6 @@ public class UserServiceImp implements UserService {
         } catch (Exception e) {
             return null;
         }
-
     }
 
     @Override

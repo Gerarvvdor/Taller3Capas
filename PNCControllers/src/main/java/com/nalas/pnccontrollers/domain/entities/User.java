@@ -22,6 +22,16 @@ public class User implements UserDetails {
     private String email;
     private Boolean active = true;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+
+    @JoinTable(
+            name = "sec02_users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+
+    List<Role> roles;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Token> tokens;
