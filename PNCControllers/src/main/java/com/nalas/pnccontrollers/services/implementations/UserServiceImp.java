@@ -147,4 +147,10 @@ public class UserServiceImp implements UserService {
 
         return userRepository.findByUsernameOrEmail(username, username);
     }
+
+    @Override
+    public void changeRoles(User user, List<String> roles) {
+        List<Role> rolesFind = rolesRepository.findAllById(roles);
+        user.setRoles(rolesFound);
+    }
 }

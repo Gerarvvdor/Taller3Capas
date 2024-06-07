@@ -2,8 +2,10 @@ package com.nalas.pnccontrollers.controllers;
 
 
 import com.nalas.pnccontrollers.domain.dtos.GeneralResponse;
+import com.nalas.pnccontrollers.domain.dtos.changeRoleDTO;
 import com.nalas.pnccontrollers.domain.entities.User;
 import com.nalas.pnccontrollers.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +50,13 @@ public class UserController {
                         .status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .build();
             }
+        }
+    }
+    @PostMapping("/api/user")
+    public class UserController {
+        @PostMapping("/change:roles")
+        public ResponseEntity<GeneralResponse> changeRoles(@RequestBody @Valid changeRoleDTO.ChangeRpleDTO info){
+            User user = userService.findByIdentifier()
         }
     }
 }
