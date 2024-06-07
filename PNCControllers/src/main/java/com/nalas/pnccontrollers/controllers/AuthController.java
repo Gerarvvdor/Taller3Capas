@@ -51,8 +51,14 @@ public class AuthController {
 
             Token token = userService.registerToken(user);
 
+            //return new ResponseEntity<>(new TokenDTO(token), HttpStatus.OK);
 
-            return new ResponseEntity<>(new TokenDTO(token), HttpStatus.OK);
+            return GeneralResponse.builder()
+                    .data(new TokenDTO(token))
+                    .status(HttpStatus.OK)
+                    .message("User logged in successfully -- ROL:" + user.getRoles().toString())
+                    .build();
+
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

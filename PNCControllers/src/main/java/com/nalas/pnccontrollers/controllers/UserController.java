@@ -2,7 +2,7 @@ package com.nalas.pnccontrollers.controllers;
 
 
 import com.nalas.pnccontrollers.domain.dtos.GeneralResponse;
-import com.nalas.pnccontrollers.domain.dtos.changeRoleDTO;
+import com.nalas.pnccontrollers.domain.dtos.ChangeRolesDTO;
 import com.nalas.pnccontrollers.domain.entities.User;
 import com.nalas.pnccontrollers.services.UserService;
 import jakarta.validation.Valid;
@@ -18,6 +18,27 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @PostMapping("/change")
+    public ResponseEntity<GeneralResponse> changeRoles(@RequestBody @Valid ChangeRolesDTO info){
+
+        User user = userService.findByIdentifier(info.getIdentifier());
+
+
+        if(user == null) {
+            return GeneralResponse.builder()
+                    .message("User not found")
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
+        }
+
+        //userService.changeRoles(user, info.getRoles());
+
+        return GeneralResponse.builder()
+                .message("Roles changed")
+                .status(HttpStatus.OK)
+                .build();
     }
 
     @DeleteMapping("/delete/{identifier}")
@@ -50,13 +71,6 @@ public class UserController {
                         .status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .build();
             }
-        }
-    }
-    @PostMapping("/api/user")
-    public class UserController {
-        @PostMapping("/change:roles")
-        public ResponseEntity<GeneralResponse> changeRoles(@RequestBody @Valid changeRoleDTO.ChangeRpleDTO info){
-            User user = userService.findByIdentifier()
         }
     }
 }

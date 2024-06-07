@@ -1,8 +1,10 @@
 package com.nalas.pnccontrollers.services.implementations;
 
 import com.nalas.pnccontrollers.domain.dtos.UserRegiserDTO;
+import com.nalas.pnccontrollers.domain.entities.Role;
 import com.nalas.pnccontrollers.domain.entities.Token;
 import com.nalas.pnccontrollers.domain.entities.User;
+import com.nalas.pnccontrollers.repositories.RoleRepository;
 import com.nalas.pnccontrollers.repositories.TokenRepository;
 import com.nalas.pnccontrollers.repositories.UserRepository;
 import com.nalas.pnccontrollers.services.UserService;
@@ -19,8 +21,9 @@ import java.util.Optional;
 @Service
 public class UserServiceImp implements UserService {
 
-    @Autowired
-    public PasswordEncoder passwordEncoder;
+    private final RoleRepository rolesRepository;
+
+    public final PasswordEncoder passwordEncoder;
 
     private final JWTTools jwtTools;
 
@@ -28,10 +31,12 @@ public class UserServiceImp implements UserService {
 
     private final UserRepository userRepository;
 
-    public UserServiceImp(UserRepository userRepository, JWTTools jwtTools, TokenRepository tokenRepository) {
+    public UserServiceImp(UserRepository userRepository, JWTTools jwtTools, TokenRepository tokenRepository, RoleRepository rolesRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.jwtTools = jwtTools;
         this.tokenRepository = tokenRepository;
+        this.rolesRepository = rolesRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -150,6 +155,8 @@ public class UserServiceImp implements UserService {
     @Override
     public void changeRoles(User user, List<String> roles) {
         List<Role> rolesFind = rolesRepository.findAllById(roles);
-        user.setRoles(rolesFound);
+        user.setRoles(rolesFind);
+
+        userRepository.save(user);
     }
 }
